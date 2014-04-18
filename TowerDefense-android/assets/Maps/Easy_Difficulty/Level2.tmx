@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="20" height="15" tilewidth="64" tileheight="64">
+ <tileset firstgid="1" name="Grass_All" tilewidth="64" tileheight="64">
+  <image source="Grass_All.png" width="321" height="427"/>
+  <tile id="0">
+   <properties>
+    <property name="ground" value=""/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="ground" value=""/>
+   </properties>
+  </tile>
+  <tile id="5">
+   <properties>
+    <property name="ground" value=""/>
+   </properties>
+  </tile>
+  <tile id="6">
+   <properties>
+    <property name="ground" value=""/>
+   </properties>
+  </tile>
+  <tile id="10">
+   <properties>
+    <property name="grass" value=""/>
+   </properties>
+  </tile>
+  <tile id="11">
+   <properties>
+    <property name="ground" value=""/>
+   </properties>
+  </tile>
+  <tile id="15">
+   <properties>
+    <property name="ground" value=""/>
+   </properties>
+  </tile>
+  <tile id="16">
+   <properties>
+    <property name="ground" value=""/>
+   </properties>
+  </tile>
+  <tile id="20">
+   <properties>
+    <property name="ground" value=""/>
+   </properties>
+  </tile>
+  <tile id="21">
+   <properties>
+    <property name="finish" value=""/>
+    <property name="ground" value=""/>
+   </properties>
+  </tile>
+  <tile id="25">
+   <properties>
+    <property name="finish" value=""/>
+    <property name="ground" value=""/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Tile Layer 1" width="20" height="15">
+  <data encoding="base64" compression="zlib">
+   eJzNUjEOwCAIRId20EEG+/+ntkNNCIET7dKBGE7hOLlCROVDXCo/njidswX65QXuyNsE7qqakQP9OtCCuHa0SEzP2ia4NUsCfNmps/D68rHTW+aax8KR9qFvcOn/78bukHZvR8hLg0N6mSd1Kz6OeGjXW9bsUa//MW6faQvU
+  </data>
+ </layer>
+</map>

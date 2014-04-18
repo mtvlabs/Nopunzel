@@ -14,11 +14,8 @@ import com.me.mygdxgame.Tower.TowerStatus;
 public class GameScreen implements Screen{
 	
 	enum GameStatus{
-		Title, Menu, Select, Game, Win, WinContPressed, WinExitPressed, Lose, Quit;
-	}
-	
-	enum Difficulty{
-		None, Easy, Medium, Hard;
+		Title, Menu, MenuStart, MenuQuit, Select, SelectEasy, SelectMedium, SelectHard,
+		Game, Win, WinContinue, WinExit, Lose, LoseMenu, LoseReset, LoseQuit, Quit, QuitMenu, QuitQuit;
 	}
 	
 	public TowerDefense towerDefense;
@@ -26,8 +23,12 @@ public class GameScreen implements Screen{
 	public ShapeRenderer shapeRen;
 	public SpriteBatch batch;
 	
-	public Map maps[] = new Map[2];
+	public Map maps[];
 	public int currentMap;
+	
+	public Map easyMaps[] = new Map[4];
+	public Map mediumMaps[] = new Map[4];
+	public Map hardMaps[] = new Map[4];
 
 	public ArrayList<Tower> towers;
 	
@@ -35,16 +36,15 @@ public class GameScreen implements Screen{
 	public int numOfEnemies;
 	public int time;
 	
-	public int timeDelay;
-	
 	public int playerHealth;
 	public int playerGold;
 
+	public int timeDelay;
+	
 	public String health;
 	public String currency;
 	
 	public GameStatus status;
-	public Difficulty difficulty;
 	
 	public boolean paused;
 	
@@ -66,23 +66,32 @@ public class GameScreen implements Screen{
 		batch = new SpriteBatch();
 		shapeRen = new ShapeRenderer();
 		
-		maps[0] = new Map(15, 15, 100, Assets.maps[0], Assets.background_1);
-		maps[1] = new Map(25, 25, 100, Assets.maps[1], Assets.background_1);
+		easyMaps[0] = new Map(30, 20, 100, Assets.maps[0], Assets.background_1);
+		easyMaps[1] = new Map(30, 20, 100, Assets.maps[1], Assets.background_1);
+		easyMaps[2] = new Map(30, 20, 100, Assets.maps[2], Assets.background_1);
+		easyMaps[3] = new Map(30, 20, 100, Assets.maps[3], Assets.background_1);
+		
+		mediumMaps[0] = new Map(30, 15, 40, Assets.maps[4], Assets.background_1);
+		mediumMaps[1] = new Map(30, 15, 40, Assets.maps[5], Assets.background_1);
+		mediumMaps[2] = new Map(30, 15, 40, Assets.maps[6], Assets.background_1);
+		mediumMaps[3] = new Map(30, 15, 40, Assets.maps[7], Assets.background_1);
+		
+		hardMaps[0] = new Map(35, 10, 30, Assets.maps[8], Assets.background_1);
+		hardMaps[1] = new Map(35, 10, 30, Assets.maps[9], Assets.background_1);
+		hardMaps[2] = new Map(35, 10, 30, Assets.maps[10], Assets.background_1);
+		hardMaps[3] = new Map(35, 10, 30, Assets.maps[11], Assets.background_1);
 		
 		towers = new ArrayList<Tower>();
-		
-		timeDelay = 0;
 		
 		health = "";
 		currency = "";
 		
 		status = GameStatus.Title;
-		difficulty = Difficulty.None;
 		
 		paused = false;
 		
-		towerButton = new Button(Assets.towerSprite, 1389, 710);
-		upgradeButton = new Button(Assets.upgradeButton, 1389, 400);
+		towerButton = new Button(Assets.towerSprite, 1385, 500);
+		upgradeButton = new Button(Assets.upgradeButton, 1350, 350);
 		
 		Gdx.input.setInputProcessor(new Input(this));
 	}
@@ -119,15 +128,23 @@ public class GameScreen implements Screen{
 			
 			if(playerHealth == 0 || numOfEnemies == maps[currentMap].numOfEnemies){
 				if(playerHealth == 0){
-					status = GameStatus.Lose;
+					if(timeDelay == 50){
+						maps[currentMap].music.stop();
+						Assets.loseResult.play();
+						status = GameStatus.Lose;
+						timeDelay = 0;
+					}
+					timeDelay++;
 				}
 				else{
 					if(!enemiesOnMap()){
-						timeDelay++;
-						if(timeDelay == 10){
-							timeDelay = 0;
+						if(timeDelay == 50){
+							maps[currentMap].music.stop();
+							Assets.winResult.play();
 							status = GameStatus.Win;
+							timeDelay = 0;
 						}
+						timeDelay++;
 					}
 				}
 			}
@@ -162,27 +179,48 @@ public class GameScreen implements Screen{
 				batch.draw(Assets.difficultyScreen, 0, 0);
 			batch.end();
 		}
+		else if(GameStatus.SelectEasy == status){
+			batch.begin();
+				batch.draw(Assets.difficultyEasyScreen, 0, 0);
+			batch.end();
+		}
+		else if(GameStatus.SelectMedium == status){
+			batch.begin();
+				batch.draw(Assets.difficultyMediumScreen, 0, 0);
+			batch.end();
+		}
+		else if(GameStatus.SelectHard == status){
+			batch.begin();
+				batch.draw(Assets.difficultyHardScreen, 0, 0);
+			batch.end();
+		}
 		else if(GameStatus.Game == status){	
 			maps[currentMap].renderer(camera);
 			
 			batch.begin();
 				//This display health of player
-				batch.draw(Assets.healthIcon, 1305, 860);
+				batch.draw(Assets.healthIcon, 1305, 875);
 				health = String.valueOf(playerHealth);
 		
-				Assets.font.draw(batch, health, 1390, 900);
+				Assets.font.draw(batch, health, 1390, 925);
 				//End of user Health
 		
 				//This display currency of player
-				batch.draw(Assets.currencyIcon, 1305, 660);
+				batch.draw(Assets.currencyIcon, 1305, 775);
 				currency = String.valueOf(playerGold);
 		
-				Assets.font.draw(batch,currency, 1390,700);
+				Assets.font.draw(batch, currency, 1390 ,825);
 				//End of user Currency
 		
 				//Draw Tower Button
 				batch.draw(towerButton.image, towerButton.xCoor, towerButton.yCoor);
-				batch.draw(upgradeButton.image, upgradeButton.xCoor, upgradeButton.yCoor);
+				
+				if(!upgradeButton.isPressed()){
+					batch.draw(upgradeButton.image, upgradeButton.xCoor, upgradeButton.yCoor);
+				}
+				else{
+					batch.draw(Assets.upgradePressed, upgradeButton.xCoor, upgradeButton.yCoor);
+				}
 			
 				for(int i=0; i<enemies.length; i++){
 					if(enemies[i].inGame){
@@ -226,14 +264,14 @@ public class GameScreen implements Screen{
 				batch.draw(Assets.winScreen, 0, 0);
 			batch.end();
 		}
-		else if(GameStatus.WinContPressed == status){
+		else if(GameStatus.WinContinue == status){
 			batch.begin();
-				batch.draw(Assets.winContinuePressedScreen, 0, 0);
+				batch.draw(Assets.winContinueScreen, 0, 0);
 			batch.end();
 		}
-		else if(GameStatus.WinExitPressed == status){
+		else if(GameStatus.WinExit == status){
 			batch.begin();
-				batch.draw(Assets.winExitPressedScreen, 0, 0);
+				batch.draw(Assets.winExitScreen, 0, 0);
 			batch.end();
 		}
 		else if(GameStatus.Lose == status){
@@ -241,9 +279,34 @@ public class GameScreen implements Screen{
 				batch.draw(Assets.loseScreen, 0, 0);
 			batch.end();
 		}
+		else if(GameStatus.LoseMenu == status){
+			batch.begin();
+				batch.draw(Assets.loseMenuScreen, 0, 0);
+			batch.end();
+		}
+		else if(GameStatus.LoseReset == status){
+			batch.begin();
+				batch.draw(Assets.loseResetScreen, 0, 0);
+			batch.end();
+		}
+		else if(GameStatus.LoseQuit == status){
+			batch.begin();
+				batch.draw(Assets.loseQuitScreen, 0, 0);
+			batch.end();
+		}
 		else if(GameStatus.Quit == status){
 			batch.begin();
 				batch.draw(Assets.quitScreen, 0, 0);
+			batch.end();
+		}
+		else if(GameStatus.QuitMenu == status){
+			batch.begin();
+				batch.draw(Assets.quitMenuScreen, 0, 0);
+			batch.end();
+		}
+		else if(GameStatus.QuitQuit == status){
+			batch.begin();
+				batch.draw(Assets.quitQuitScreen, 0, 0);
 			batch.end();
 		}
 	}
@@ -278,8 +341,11 @@ public class GameScreen implements Screen{
 		Assets.dispose();
 		batch.dispose();
 		shapeRen.dispose();
-		for(int i=0; i<maps.length; i++){
-			maps[i].dispose();
+
+		for(int i=0; i<4; i++){
+			easyMaps[i].dispose();
+			mediumMaps[i].dispose();
+			hardMaps[i].dispose();
 		}
 	}
 }

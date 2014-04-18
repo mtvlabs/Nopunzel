@@ -154,21 +154,23 @@ public class Enemy {
 			
 			//As long as the enemy has not gone the opposite direction, the enemy will continue to move in the direction is was going originally.
 			if(tileBlockX < screen.maps[screen.currentMap].path.getWidth()-1 && tileBlockX > 0){
-				if(screen.maps[screen.currentMap].path.getCell(tileBlockX, tileBlockY + 1).getTile().getProperties().containsKey("ground") == true && previous != Direction.DOWNWARD){
-					direction = Direction.UPWARD;
-					image = Assets.enemySprite[10];
-				}
-				if(screen.maps[screen.currentMap].path.getCell(tileBlockX, tileBlockY - 1).getTile().getProperties().containsKey("ground") == true && previous != Direction.UPWARD){
-					direction = Direction.DOWNWARD;
-					image = Assets.enemySprite[6];
-				}
-				if(screen.maps[screen.currentMap].path.getCell(tileBlockX + 1, tileBlockY).getTile().getProperties().containsKey("ground") == true && previous != Direction.LEFT){
-					direction = Direction.RIGHT;
-					image = Assets.enemySprite[0];
-				}
-				if(screen.maps[screen.currentMap].path.getCell(tileBlockX - 1, tileBlockY).getTile().getProperties().containsKey("ground") == true && previous != Direction.RIGHT){
-					direction = Direction.LEFT;
-					image = Assets.enemySprite[3];
+				if(tileBlockY < screen.maps[screen.currentMap].path.getHeight()-1 && tileBlockY > 0){
+					if(screen.maps[screen.currentMap].path.getCell(tileBlockX, tileBlockY + 1).getTile().getProperties().containsKey("ground") == true && previous != Direction.DOWNWARD){
+						direction = Direction.UPWARD;
+						image = Assets.enemySprite[10];
+					}
+					if(screen.maps[screen.currentMap].path.getCell(tileBlockX, tileBlockY - 1).getTile().getProperties().containsKey("ground") == true && previous != Direction.UPWARD){
+						direction = Direction.DOWNWARD;
+						image = Assets.enemySprite[6];
+					}
+					if(screen.maps[screen.currentMap].path.getCell(tileBlockX + 1, tileBlockY).getTile().getProperties().containsKey("ground") == true && previous != Direction.LEFT){
+						direction = Direction.RIGHT;
+						image = Assets.enemySprite[0];
+					}
+					if(screen.maps[screen.currentMap].path.getCell(tileBlockX - 1, tileBlockY).getTile().getProperties().containsKey("ground") == true && previous != Direction.RIGHT){
+						direction = Direction.LEFT;
+						image = Assets.enemySprite[3];
+					}
 				}
 			}
 			

@@ -50,9 +50,8 @@ public class Tower {
 	}
 	
 	public void upgrade(){
-		fireRate -= 25;
+		range.radius += 10;
 		damage += 10;
-		System.out.println("Tower is upgraded");
 	}
 	
 	public void shooting(GameScreen screen){

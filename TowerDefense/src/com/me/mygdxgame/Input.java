@@ -2,7 +2,6 @@ package com.me.mygdxgame;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
-import com.me.mygdxgame.GameScreen.Difficulty;
 import com.me.mygdxgame.GameScreen.GameStatus;
 import com.me.mygdxgame.Tower.TowerStatus;
 
@@ -55,40 +54,25 @@ public class Input implements InputProcessor {
 			if(!Assets.menuBackground.isPlaying()){
 				Assets.menuBackground.play();
 			}
-			if(xTouch >= 487 && xTouch <= 1145){
-				if(yTouch >= 270 && yTouch <= 400){
-					gameScreen.currentMap = 0;
-					gameScreen.difficulty = Difficulty.None;
-					setGame();
-					gameScreen.status = GameStatus.Select;
+			if(xTouch >= 499 && xTouch <= 1080){
+				if(yTouch >= 499 && yTouch <= 650){
+					gameScreen.status = GameStatus.MenuStart;
 				}
-				else if(yTouch >= 534 && yTouch <= 651){
-					Gdx.app.exit();
+				else if(yTouch >= 699 && yTouch <= 850){
+					gameScreen.status = GameStatus.MenuQuit;
 				}
 			}
 		}
 		else if(GameStatus.Select == gameScreen.status){
-			if(xTouch >= 433 && xTouch <= 1165){
-				if(yTouch >= 142 && yTouch <= 284){
-					if(Assets.menuBackground.isPlaying()){
-						Assets.menuBackground.stop();
-					}
-					gameScreen.difficulty = Difficulty.Easy;
-					gameScreen.status = GameStatus.Game;
+			if(xTouch >= 499 && xTouch <= 1080){
+				if(yTouch >= 299 && yTouch <= 450){
+					gameScreen.status = GameStatus.SelectEasy;
 				}
-				else if(yTouch >= 384 && yTouch <= 529){
-					if(Assets.menuBackground.isPlaying()){
-						Assets.menuBackground.stop();
-					}
-					gameScreen.difficulty = Difficulty.Medium;
-					gameScreen.status = GameStatus.Game;
+				else if(yTouch >= 499 && yTouch <= 650){
+					gameScreen.status = GameStatus.SelectMedium;
 				}
-				else if(yTouch >= 602 && yTouch <= 739){
-					if(Assets.menuBackground.isPlaying()){
-						Assets.menuBackground.stop();
-					}
-					gameScreen.difficulty = Difficulty.Hard;
-					gameScreen.status = GameStatus.Game;
+				else if(yTouch >= 699 && yTouch <= 850){
+					gameScreen.status = GameStatus.SelectHard;
 				}
 			}
 		}
@@ -102,11 +86,11 @@ public class Input implements InputProcessor {
 					}
 				}
 			}
-			else if(xTouch >= (gameScreen.upgradeButton.xCoor) && xTouch <= (gameScreen.upgradeButton.xCoor+gameScreen.upgradeButton.bound.width)){
+			
+			if(xTouch >= (gameScreen.upgradeButton.xCoor) && xTouch <= (gameScreen.upgradeButton.xCoor+gameScreen.upgradeButton.bound.width)){
 				if(yTouch >= (960-gameScreen.upgradeButton.yCoor-gameScreen.upgradeButton.bound.height) && yTouch <= (960-gameScreen.upgradeButton.yCoor)){
 					if(select && gameScreen.playerGold >= Tower.upgradeCost){
-						gameScreen.playerGold -= Tower.upgradeCost;
-						selectedTower.upgrade();
+						gameScreen.upgradeButton.setPressed(true);
 						return true;
 					}
 				}
@@ -132,43 +116,35 @@ public class Input implements InputProcessor {
 			}
 		}
 		else if(GameStatus.Win == gameScreen.status){
-			gameScreen.maps[gameScreen.currentMap].music.stop();
-			Assets.winResult.play();
 			if(xTouch >= 499 && xTouch <= 1080){
 				if(yTouch >= 499 && yTouch <= 650){
-					gameScreen.status = GameStatus.WinContPressed;
+					gameScreen.status = GameStatus.WinContinue;
 				}
 				else if(yTouch >= 699 && yTouch <= 850){
-					gameScreen.status = GameStatus.WinExitPressed;
+					gameScreen.status = GameStatus.WinExit;
 				}
 			}
 		}
 		else if(GameStatus.Lose == gameScreen.status){
-			gameScreen.maps[gameScreen.currentMap].music.stop();
-			Assets.loseResult.play();
-			if(xTouch >= 492 && xTouch <= 1085){
-				if(yTouch >= 315 && yTouch <= 452){
-					Assets.loseResult.stop();
-					setGame();
-					gameScreen.status = GameStatus.Game;
+			if(xTouch >= 499 && xTouch <= 1080){
+				if(yTouch >= 299 && yTouch <= 450){
+					gameScreen.status = GameStatus.LoseReset;
 				}
-				else if(yTouch >= 512 && yTouch <= 660){
-					Assets.loseResult.stop();
-					gameScreen.status = GameStatus.Menu;
+				else if(yTouch >= 499 && yTouch <= 650){
+					gameScreen.status = GameStatus.LoseMenu;
 				}
-				else if(yTouch >= 714 && yTouch <= 855){
-					Assets.loseResult.stop();
-					Gdx.app.exit();
+				else if(yTouch >= 699 && yTouch <= 850){
+					gameScreen.status = GameStatus.LoseQuit;
 				}
 			}
 		}
 		else if(GameStatus.Quit == gameScreen.status){
-			if(xTouch >= 580 && xTouch <= 1079){
-				if(yTouch >= 321 && yTouch <= 465){
-					gameScreen.status = GameStatus.Menu;
+			if(xTouch >= 499 && xTouch <= 1080){
+				if(yTouch >= 499 && yTouch <= 650){
+					gameScreen.status = GameStatus.QuitMenu;
 				}
-				else if(yTouch >= 509 && yTouch <= 642){
-					Gdx.app.exit();
+				else if(yTouch >= 699 && yTouch <= 850){
+					gameScreen.status = GameStatus.QuitQuit;
 				}
 			}
 		}
@@ -180,79 +156,153 @@ public class Input implements InputProcessor {
 		int xTouch = (int) (gameScreen.widthRatio*Gdx.input.getX());
 		int yTouch = (int) (gameScreen.heightRatio*Gdx.input.getY());
 		
-		if(GameStatus.Game == gameScreen.status){
-			boolean towerIsHere = false;
+		if(xTouch < 1580 && xTouch >= 0){
+			if(yTouch < 960 && yTouch >= 0){
+				if(GameStatus.MenuStart == gameScreen.status){
+					gameScreen.currentMap = 0;
+					gameScreen.maps = null;
+					gameScreen.status = GameStatus.Select;
+				}
+				else if(GameStatus.MenuQuit == gameScreen.status){
+					Gdx.app.exit();
+				}
+				else if(GameStatus.SelectEasy == gameScreen.status){
+					if(Assets.menuBackground.isPlaying()){
+						Assets.menuBackground.stop();
+					}
+					gameScreen.maps = gameScreen.easyMaps;
+					setGame();
+					gameScreen.status = GameStatus.Game;
+				}
+				else if(GameStatus.SelectMedium == gameScreen.status){
+					if(Assets.menuBackground.isPlaying()){
+						Assets.menuBackground.stop();
+					}
+					gameScreen.maps = gameScreen.mediumMaps;
+					setGame();
+					gameScreen.status = GameStatus.Game;
+				}
+				else if(GameStatus.SelectHard == gameScreen.status){
+					if(Assets.menuBackground.isPlaying()){
+						Assets.menuBackground.stop();
+					}
+					gameScreen.maps = gameScreen.hardMaps;
+					setGame();
+					gameScreen.status = GameStatus.Game;
+				}
+				else if(GameStatus.Game == gameScreen.status){
+					boolean towerIsHere = false;
 		
-			//Locate the closes cell to the user's last location
-			int xCell = (int)(xTouch/64);
-			int yCell = (int)((960-yTouch)/64);
+					//Locate the closes cell to the user's last location
+					int xCell = (int)(xTouch/64);
+					int yCell = (int)((960-yTouch)/64);
 			
-			//This part checks to see if a tower was already here.
-			//If a tower is here, the current tower cannot be placed here.
-			if(holding){
-				if(xCell < gameScreen.maps[gameScreen.currentMap].path.getWidth()){
-					for(Tower t: gameScreen.towers){
-						if(t.xTile == xCell && t.yTile == yCell){
-							towerIsHere = true;
+					//This part checks to see if a tower was already here.
+					//If a tower is here, the current tower cannot be placed here.
+					if(holding){
+						if(xCell < gameScreen.maps[gameScreen.currentMap].path.getWidth()){
+							for(Tower t: gameScreen.towers){
+								if(t.xTile == xCell && t.yTile == yCell){
+									towerIsHere = true;
+								}
+							}
+							//If there is no tower here, make sure that it is not the path and place the tower.
+							if(towerIsHere == false && gameScreen.maps[gameScreen.currentMap].path.getCell(xCell, yCell).getTile().getProperties().containsKey("grass") == true){
+								holding = false;
+								gameScreen.playerGold -= Tower.towerCost;
+								tower.status = TowerStatus.Selected;
+								tower.xCoor = xCell*64;
+								tower.yCoor = yCell*64;
+								tower.xTile = xCell;
+								tower.yTile = yCell;
+								tower.setRange();
+								currentTower++;
+					
+								selectedTower = tower;
+								select = true;
+					
+								Assets.buildTower.play();
+								tower = null;
+							}	
+							else{
+								holding = false;
+								gameScreen.towers.remove(currentTower);
+								tower = null;
+							}
+						}
+						else{
+							holding = false;
+							gameScreen.towers.remove(currentTower);
 						}
 					}
-					//If there is no tower here, make sure that it is not the path and place the tower.
-					if(towerIsHere == false && gameScreen.maps[gameScreen.currentMap].path.getCell(xCell, yCell).getTile().getProperties().containsKey("grass") == true){
-						holding = false;
-						gameScreen.playerGold -= Tower.towerCost;
-						tower.status = TowerStatus.Selected;
-						tower.xCoor = xCell*64;
-						tower.yCoor = yCell*64;
-						tower.xTile = xCell;
-						tower.yTile = yCell;
-						tower.setRange();
-						currentTower++;
-					
-						selectedTower = tower;
-						select = true;
-					
-						Assets.buildTower.play();
-						tower = null;
-					}	
-					else{
-						holding = false;
-						gameScreen.towers.remove(currentTower);
-						tower = null;
+					if(gameScreen.upgradeButton.isPressed()){
+						gameScreen.playerGold -= Tower.upgradeCost;
+						selectedTower.upgrade();
+						gameScreen.upgradeButton.setPressed(false);
 					}
 				}
-				else{
+				else if(GameStatus.WinContinue == gameScreen.status){
+					Assets.winResult.stop();
+					gameScreen.currentMap++;
+					if(gameScreen.currentMap != gameScreen.maps.length ){
+						setGame();
+						gameScreen.status = GameStatus.Game;
+					}
+					else{
+						gameScreen.status = GameStatus.Quit;
+					}
+				}
+				else if(GameStatus.WinExit == gameScreen.status){
+					Gdx.app.exit();
+				}
+				else if(GameStatus.LoseReset == gameScreen.status){
+					Assets.loseResult.stop();
+					setGame();
+					gameScreen.status = GameStatus.Game;
+				}
+				else if(GameStatus.LoseMenu == gameScreen.status){
+					Assets.loseResult.stop();
+					gameScreen.status = GameStatus.Menu;
+				}
+				else if(GameStatus.LoseQuit == gameScreen.status){
+					Gdx.app.exit();
+				}
+				else if(GameStatus.QuitMenu == gameScreen.status){
+					gameScreen.status = GameStatus.Menu;
+				}
+				else if(GameStatus.QuitQuit == gameScreen.status){
+					Gdx.app.exit();
+				}
+			}
+			else{
+				if(holding){
 					holding = false;
 					gameScreen.towers.remove(currentTower);
+					tower = null;
 				}
 			}
 		}
-		else if(GameStatus.WinContPressed == gameScreen.status){
-			Assets.winResult.stop();
-			gameScreen.currentMap++;
-			if(gameScreen.currentMap != gameScreen.maps.length ){
-				setGame();
-				gameScreen.status = GameStatus.Game;
+		else{
+			if(holding){
+				holding = false;
+				gameScreen.towers.remove(currentTower);
+				tower = null;
 			}
-				else{
-					gameScreen.status = GameStatus.Quit;
-			}
-		}
-		else if(GameStatus.WinExitPressed == gameScreen.status){
-			Assets.winResult.stop();
-			Gdx.app.exit();
 		}
 		return true;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		int xTouch = (int) (gameScreen.widthRatio*Gdx.input.getX());
-		int yTouch = (int) (gameScreen.heightRatio*Gdx.input.getY());
+		if(GameStatus.Game == gameScreen.status){
+			int xTouch = (int) (gameScreen.widthRatio*Gdx.input.getX());
+			int yTouch = (int) (gameScreen.heightRatio*Gdx.input.getY());
 		
-		if(holding){
-			tower.xCoor = (int)(xTouch - 32);
-			tower.yCoor = (int)(960 - 32 - yTouch);
-			tower.setRange();
+			if(holding){
+				tower.xCoor = (int)(xTouch - 32);
+				tower.yCoor = (int)(960 - 32 - yTouch);
+				tower.setRange();
+			}
 		}
 		return true;
 	}
